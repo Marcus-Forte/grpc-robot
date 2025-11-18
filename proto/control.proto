@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+// Define the service for streaming keyboard input
+service KeyboardService {
+  // Client Streaming RPC: The client streams KeyInput messages, 
+  rpc SendKeyboardStream(stream KeyInput) returns (google.protobuf.Empty);
+}
+
+// Message representing a single unit of keyboard input (e.g., a character)
+message KeyInput {
+  // The actual character or key value pressed
+  string key_value = 1;
+}
