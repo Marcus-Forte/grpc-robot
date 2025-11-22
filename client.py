@@ -27,6 +27,10 @@ def key_input_generator():
     try:
         # Set terminal to raw mode so we get single key presses
         tty.setraw(fd)
+        # Ensure echo is disabled so typed characters are not shown by the terminal
+        new_settings = termios.tcgetattr(fd)
+        new_settings[3] = new_settings[3] & ~termios.ECHO
+        termios.tcsetattr(fd, termios.TCSADRAIN, new_settings)
         while True:
             try:
                 ch = sys.stdin.read(1)
@@ -41,7 +45,15 @@ def key_input_generator():
 
             # For readability, show the pressed key (non-printables shown as repr)
             display = ch if ch.isprintable() else repr(ch)
-            print(f"Sent: {display}")
+            # Clear the entire current line (ESC[2K) and print a single status line
+            sys.stdout.write('\r\x1b[2K')
+            sys.stdout.write(f"Sent: {display}\n")
+            sys.stdout.flush()
+
+            # If user pressed Ctrl-C or Ctrl-D, stop (representations '\x03' and '\x04')
+            if ch in ('\x03', '\x04'):
+                print("\nClient finished sending stream.")
+                break
 
             # Yield the KeyInput message using the generated stub
             yield control_pb2.KeyInput(key_value=ch)
