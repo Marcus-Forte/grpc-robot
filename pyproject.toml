@@ -14,5 +14,5 @@ dependencies = [
 ]
 
 [tool.setuptools.packages.find]
-include = ["proto_gen*"]
+include = ["proto_gen*", "app"]
 exclude = ["proto"]

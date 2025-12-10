@@ -1,5 +1,4 @@
 from gpiozero import DigitalOutputDevice
-import sys
 import grpc
 import time
 from concurrent import futures

@@ -1,8 +1,10 @@
 # Build the server
-FROM python:3.13-slim
+FROM ghcr.io/astral-sh/uv:trixie-slim
 
 COPY . /app
 
-RUN pip3 install -r /app/requirements.txt
+WORKDIR /app
 
-ENTRYPOINT ["python", "/app/server.py"]
+RUN uv sync
+
+CMD ["uv", "run", "--", "python", "-m", "app.server"]
