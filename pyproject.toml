@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grpc-robot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "readme.md"
+requires-python = ">=3.14"
+dependencies = [
+    "gpiozero>=2.0.1",
+    "grpcio-tools>=1.76.0",
+]
+
+[tool.setuptools.packages.find]
+include = ["proto_gen*"]
+exclude = ["proto"]

@@ -138,7 +138,7 @@ def serve():
     Sets up and runs the gRPC server.
     """
     # Create a gRPC server with a thread pool for handling requests
-    server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=2))
     
     # Add the implemented service servicer to the server
     control_pb2_grpc.add_KeyboardServiceServicer_to_server(
