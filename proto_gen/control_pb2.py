@@ -25,15 +25,19 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17proto_gen/control.proto\x1a\x1bgoogle/protobuf/empty.proto\"\x1d\n\x08KeyInput\x12\x11\n\tkey_value\x18\x01 \x01(\t2L\n\x0fKeyboardService\x12\x39\n\x12SendKeyboardStream\x12\t.KeyInput\x1a\x16.google.protobuf.Empty(\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17proto_gen/control.proto\x1a\x1bgoogle/protobuf/empty.proto\"B\n\x0bMoveRequest\x12!\n\tdirection\x18\x01 \x01(\x0e\x32\x0e.MoveDirection\x12\x10\n\x08\x64uration\x18\x02 \x01(\x02\"\x1d\n\x08KeyInput\x12\x11\n\tkey_value\x18\x01 \x01(\t*O\n\rMoveDirection\x12\x10\n\x0cMOVE_FORWARD\x10\x00\x12\r\n\tMOVE_DOWN\x10\x01\x12\r\n\tMOVE_LEFT\x10\x02\x12\x0e\n\nMOVE_RIGHT\x10\x03\x32w\n\x0cRobotControl\x12\x39\n\x12SendKeyboardStream\x12\t.KeyInput\x1a\x16.google.protobuf.Empty(\x01\x12,\n\x04Move\x12\x0c.MoveRequest\x1a\x16.google.protobuf.Emptyb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'proto_gen.control_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_KEYINPUT']._serialized_start=56
-  _globals['_KEYINPUT']._serialized_end=85
-  _globals['_KEYBOARDSERVICE']._serialized_start=87
-  _globals['_KEYBOARDSERVICE']._serialized_end=163
+  _globals['_MOVEDIRECTION']._serialized_start=155
+  _globals['_MOVEDIRECTION']._serialized_end=234
+  _globals['_MOVEREQUEST']._serialized_start=56
+  _globals['_MOVEREQUEST']._serialized_end=122
+  _globals['_KEYINPUT']._serialized_start=124
+  _globals['_KEYINPUT']._serialized_end=153
+  _globals['_ROBOTCONTROL']._serialized_start=236
+  _globals['_ROBOTCONTROL']._serialized_end=355
 # @@protoc_insertion_point(module_scope)

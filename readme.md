@@ -3,6 +3,10 @@
 ## Generate the proto files
 `uv run -- python -m grpc_tools.protoc -Iproto_gen=proto --python_out=. --pyi_out=. --grpc_python_out=. proto/control.proto`
 
+## Lint 
+
+`uv run -- ruff check .`
+
 ## Build
 
 `uv build .`

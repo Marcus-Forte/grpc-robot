@@ -2,10 +2,27 @@ syntax = "proto3";
 
 import "google/protobuf/empty.proto";
 
+
+enum MoveDirection {
+  MOVE_FORWARD = 0;
+  MOVE_DOWN = 1;
+  MOVE_LEFT = 2;
+  MOVE_RIGHT = 3;
+}
+
+message MoveRequest {
+  MoveDirection direction = 1;
+  float duration = 2;
+}
+
 // Define the service for streaming keyboard input
-service KeyboardService {
+service RobotControl {
   // Client Streaming RPC: The client streams KeyInput messages, 
   rpc SendKeyboardStream(stream KeyInput) returns (google.protobuf.Empty);
+
+
+  // Unary RPC: The client sends a MoveRequest. Asyhcronously moves the robot.
+  rpc Move(MoveRequest) returns (google.protobuf.Empty);
 }
 
 // Message representing a single unit of keyboard input (e.g., a character)

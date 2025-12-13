@@ -26,7 +26,7 @@ if _version_not_supported:
     )
 
 
-class KeyboardServiceStub(object):
+class RobotControlStub(object):
     """Define the service for streaming keyboard input
     """
 
@@ -37,13 +37,18 @@ class KeyboardServiceStub(object):
             channel: A grpc.Channel.
         """
         self.SendKeyboardStream = channel.stream_unary(
-                '/KeyboardService/SendKeyboardStream',
+                '/RobotControl/SendKeyboardStream',
                 request_serializer=proto__gen_dot_control__pb2.KeyInput.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                _registered_method=True)
+        self.Move = channel.unary_unary(
+                '/RobotControl/Move',
+                request_serializer=proto__gen_dot_control__pb2.MoveRequest.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 _registered_method=True)
 
 
-class KeyboardServiceServicer(object):
+class RobotControlServicer(object):
     """Define the service for streaming keyboard input
     """
 
@@ -54,23 +59,35 @@ class KeyboardServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def Move(self, request, context):
+        """Unary RPC: The client sends a MoveRequest. Asyhcronously moves the robot.
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
-def add_KeyboardServiceServicer_to_server(servicer, server):
+
+def add_RobotControlServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'SendKeyboardStream': grpc.stream_unary_rpc_method_handler(
                     servicer.SendKeyboardStream,
                     request_deserializer=proto__gen_dot_control__pb2.KeyInput.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
+            'Move': grpc.unary_unary_rpc_method_handler(
+                    servicer.Move,
+                    request_deserializer=proto__gen_dot_control__pb2.MoveRequest.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'KeyboardService', rpc_method_handlers)
+            'RobotControl', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('KeyboardService', rpc_method_handlers)
+    server.add_registered_method_handlers('RobotControl', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class KeyboardService(object):
+class RobotControl(object):
     """Define the service for streaming keyboard input
     """
 
@@ -88,8 +105,35 @@ class KeyboardService(object):
         return grpc.experimental.stream_unary(
             request_iterator,
             target,
-            '/KeyboardService/SendKeyboardStream',
+            '/RobotControl/SendKeyboardStream',
             proto__gen_dot_control__pb2.KeyInput.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def Move(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/RobotControl/Move',
+            proto__gen_dot_control__pb2.MoveRequest.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options,
             channel_credentials,
