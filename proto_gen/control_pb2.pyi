@@ -9,11 +9,11 @@ DESCRIPTOR: _descriptor.FileDescriptor
 class MoveDirection(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     __slots__ = ()
     MOVE_FORWARD: _ClassVar[MoveDirection]
-    MOVE_DOWN: _ClassVar[MoveDirection]
+    MOVE_BACKWARD: _ClassVar[MoveDirection]
     MOVE_LEFT: _ClassVar[MoveDirection]
     MOVE_RIGHT: _ClassVar[MoveDirection]
 MOVE_FORWARD: MoveDirection
-MOVE_DOWN: MoveDirection
+MOVE_BACKWARD: MoveDirection
 MOVE_LEFT: MoveDirection
 MOVE_RIGHT: MoveDirection
 

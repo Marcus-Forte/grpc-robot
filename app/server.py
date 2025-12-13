@@ -1,6 +1,9 @@
 import grpc
 import time
 from concurrent import futures
+from queue import Queue
+from queue import Empty as EmptyQueue
+import threading
 import logging
 
 from .robotControl import RobotControl, Direction
@@ -11,13 +14,46 @@ from google.protobuf.empty_pb2 import Empty
 # Set up basic logging
 logging.basicConfig(level=logging.INFO)
 
+def process_commands(command_queue: Queue, stop_event: threading.Event):
+        """Process queued Move commands on a dedicated thread."""
+        while not stop_event.is_set():
+            try:
+                cmd = command_queue.get(timeout=0.5)
+            except EmptyQueue:
+                continue
+
+            direction = cmd.get("direction")
+            duration = cmd.get("duration", 0)
+
+            move_map = {
+                control_pb2.MoveDirection.MOVE_FORWARD: Direction.FORWARD,
+                control_pb2.MoveDirection.MOVE_LEFT: Direction.LEFT,
+                control_pb2.MoveDirection.MOVE_RIGHT: Direction.RIGHT,
+                control_pb2.MoveDirection.MOVE_BACKWARD: Direction.BACKWARD,
+            }
+
+            target_direction = move_map.get(direction)
+            if target_direction is None:
+                logging.warning(f"Invalid direction received: {direction}")
+                command_queue.task_done()
+                continue
+
+            robot.activate(True)
+            robot.move(target_direction)
+            time.sleep(duration)
+            robot.move(Direction.STOP)
+            robot.activate(False)
+
+            command_queue.task_done()
+
 # Define the Servicer class that implements the RPC methods
 class RobotControlServicer(control_pb2_grpc.RobotControlServicer):
     """
     Implements the RobotControl methods defined in the .proto file.
     """
-    def __init__(self, robot: RobotControl):
+    def __init__(self, robot: RobotControl, command_queue: Queue):
         self.robot = robot
+        self.command_queue = command_queue
 
     def SendKeyboardStream(self, request_iterator, context):
         """
@@ -69,23 +105,13 @@ class RobotControlServicer(control_pb2_grpc.RobotControlServicer):
         """
         logging.info(f"Received Move command: direction={request.direction}, duration={request.duration}")
 
-        self.robot.activate(True)
+        self.command_queue.put(
+            {
+                "direction": request.direction,
+                "duration": request.duration,
+            }
+        )
 
-        if(request.direction == control_pb2.MoveDirection.MOVE_FORWARD):
-            self.robot.move(Direction.FORWARD)
-        elif(request.direction == control_pb2.MoveDirection.MOVE_LEFT):
-            self.robot.move(Direction.LEFT)
-        elif(request.direction == control_pb2.MoveDirection.MOVE_RIGHT):
-            self.robot.move(Direction.RIGHT)
-        elif(request.direction == control_pb2.MoveDirection.MOVE_DOWN):
-            self.robot.move(Direction.BACKWARD)
-        else:
-            print("Invalid direction, stopping.")
-
-        time.sleep(request.duration)
-        self.robot.move(Direction.STOP)
-        self.robot.activate(False)
-        
         return Empty()
 
 def serve(robot: RobotControl):
@@ -93,12 +119,15 @@ def serve(robot: RobotControl):
     """
     Sets up and runs the gRPC server.
     """
+    command_queue: Queue = Queue()
+    stop_event = threading.Event()
+
     # Create a gRPC server with a thread pool for handling requests
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=2))
     
     # Add the implemented service servicer to the server
     control_pb2_grpc.add_RobotControlServicer_to_server(
-        RobotControlServicer(robot), server
+        RobotControlServicer(robot, command_queue), server
     )
     
     
@@ -109,12 +138,16 @@ def serve(robot: RobotControl):
     # Start the server
     server.start()
     logging.info(f"Server started, listening on {server_address}")
+
+    worker = threading.Thread(target=process_commands(command_queue, stop_event), daemon=True)
+    worker.start()
     
     # Keep the main thread running until the server is stopped
     try:
         while True:
             time.sleep(86400) # One day
     except KeyboardInterrupt:
+        stop_event.set()
         server.stop(0)
         logging.info("Server stopped gracefully.")
 
