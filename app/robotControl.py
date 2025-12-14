@@ -17,10 +17,10 @@ Stop:       0b0
 """
 
 # --- Hardware Setup (Define the BCM GPIO pin numbers here) ---
-DATA_PIN = 17    # Serial Data Input (DS) -> IDUINO PIN D8
-CLOCK_PIN = 27   # Shift Register Clock (SHCP) -> IDUINO PIN D4
-LATCH_PIN = 22   # Storage Register Clock / Latch (STCP) -> IDUINO PIN D12
-OUTPUT_ENABLE_PIN = 23 # Output Enable (OE) -> IDUINO PIN D7 (active LOW)
+DATA_PIN = 17  # Serial Data Input (DS) -> IDUINO PIN D8
+CLOCK_PIN = 27  # Shift Register Clock (SHCP) -> IDUINO PIN D4
+LATCH_PIN = 22  # Storage Register Clock / Latch (STCP) -> IDUINO PIN D12
+OUTPUT_ENABLE_PIN = 23  # Output Enable (OE) -> IDUINO PIN D7 (active LOW)
 
 # Create a small delay to ensure the register has time to react.
 # A small delay is often needed, especially in non-real-time OS environments like Raspberry Pi OS.
@@ -33,6 +33,7 @@ clock_out = DigitalOutputDevice(CLOCK_PIN)
 latch_out = DigitalOutputDevice(LATCH_PIN)
 output_enable = DigitalOutputDevice(OUTPUT_ENABLE_PIN)  # OE pin, active LOW
 
+
 class Direction(Enum):
     FORWARD = 0b11000110
     LEFT = 0b00100111
@@ -40,10 +41,12 @@ class Direction(Enum):
     STOP = 0b00000000
     BACKWARD = 0b00111001
 
+
 class RobotControl:
     """
     RobotControl class to manage robot movements via shift register.
     """
+
     def activate(self, enable: bool):
         if enable:
             output_enable.off()  # Enable outputs (active LOW)
@@ -57,10 +60,10 @@ class RobotControl:
         Args:
             direction_byte (int): The 8-bit value representing the movement direction.
         """
-        
+
         if not isinstance(direction, Direction):
             raise ValueError("direction must be a Direction enum value")
-        
+
         self.__shift_out_8bit(direction.value)
 
     def __shift_out_8bit(self, data_byte: int):
@@ -81,7 +84,7 @@ class RobotControl:
             # 2a. Calculate the current bit's value (0 or 1)
             # We use a bitwise AND (&) with a mask that shifts left (1 << i).
             # We check the bits from 7 down to 0, which is typically the order required.
-            bit = (data_byte>> (7 - i)) & 1
+            bit = (data_byte >> (7 - i)) & 1
 
             # 2b. Set the Data pin (DS)
             if bit:

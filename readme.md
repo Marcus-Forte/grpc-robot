@@ -7,9 +7,9 @@
 
 `uv run -- ruff check .`
 
-## Build
+## Format
 
-`uv build .`
+`uv run -- black .`
 
 ## Run
 
