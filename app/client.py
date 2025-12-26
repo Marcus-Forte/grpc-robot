@@ -1,3 +1,4 @@
+import argparse
 import grpc
 import logging
 import sys
@@ -11,7 +12,7 @@ from proto_gen import control_pb2
 # Set up basic logging
 logging.basicConfig(level=logging.INFO)
 
-SERVER_ADDRESS = "192.168.3.251:50051"
+SERVER_ADDRESS = "localhost:50051"
 
 
 def key_input_generator():
@@ -64,17 +65,17 @@ def key_input_generator():
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 
 
-def run():
+def run(server_address: str):
     """
     Connects to the gRPC server and initiates the client stream.
     """
     try:
         # Connect to the server
-        with grpc.insecure_channel(SERVER_ADDRESS) as channel:
+        with grpc.insecure_channel(server_address) as channel:
             # Get the stub from the generated gRPC file
             stub = control_pb2_grpc.RobotControlStub(channel)
 
-            logging.info(f"Connecting to server at {SERVER_ADDRESS}")
+            logging.info(f"Connecting to server at {server_address}")
             # Initiate the client streaming RPC with the generator
             # We don't need to capture the Empty response explicitly
             stub.SendKeyboardStream(key_input_generator())
@@ -88,4 +89,13 @@ def run():
 
 
 if __name__ == "__main__":
-    run()
+    parser = argparse.ArgumentParser(description="Keyboard streaming client")
+    parser.add_argument(
+        "--server",
+        "-s",
+        default=SERVER_ADDRESS,
+        help="Server address in host:port format (default: %(default)s)",
+    )
+    args = parser.parse_args()
+
+    run(args.server)

@@ -18,21 +18,21 @@ Pins `PWM2A, PWM2B, PWM0A, PWM0B` are connected to 5V. The entire circuit includ
 ![Raspberry Pi Zero GPIO pinout](./docs/pinout.png)
 
 ## Generate the proto files
-`uv run -- python -m grpc_tools.protoc -Iproto_gen=proto --python_out=. --pyi_out=. --grpc_python_out=. proto/control.proto`
+`uv run python -m grpc_tools.protoc -Iproto_gen=proto --python_out=. --pyi_out=. --grpc_python_out=. proto/control.proto`
 
 ## Lint 
 
-`uv run -- ruff check .`
+`uv run ruff check .`
 
 ## Format
 
-`uv run -- black .`
+`uv run black .`
 
 ## Run
 
-`uv run -- python -m app.server`
+`uv run python -m app.server`
 
-`uv run -- python -m app.client`
+`uv run python -m app.client`
 
 ## Docker
 

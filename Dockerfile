@@ -7,4 +7,4 @@ WORKDIR /app
 
 RUN uv sync
 
-CMD ["uv", "run", "--", "python", "-m", "app.server"]
+CMD ["uv", "run", "python", "-m", "app.server"]
