@@ -47,6 +47,9 @@ class RobotControl:
     RobotControl class to manage robot movements via shift register.
     """
 
+    def __init__(self):
+        self.activate(False)
+
     def activate(self, enable: bool):
         if enable:
             output_enable.off()  # Enable outputs (active LOW)

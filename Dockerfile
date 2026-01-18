@@ -26,4 +26,4 @@ WORKDIR /app
 # lgpio only present in devcontainer
 RUN uv add lgpio && uv sync
 
-CMD ["python", "-m", "app.server"]
+CMD ["uv", "run", "-m", "app.server"]
